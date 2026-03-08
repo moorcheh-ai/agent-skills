@@ -1,0 +1,17 @@
+{
+    "name": "moorcheh",
+    "description": "Moorcheh plugin for Cursor — semantic search, AI memory, and RAG",
+    "version": "0.1.0",
+    "skills": [
+        "skills/moorcheh",
+        "skills/moorcheh-cookbooks"
+    ],
+    "commands": [
+        "commands/quickstart.md",
+        "commands/search.md",
+        "commands/answer.md",
+        "commands/namespaces.md",
+        "commands/upload.md",
+        "commands/explore.md"
+    ]
+}
