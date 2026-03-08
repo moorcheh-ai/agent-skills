@@ -1,0 +1,46 @@
+{
+  "name": "moorcheh-agent-skills",
+  "version": "0.1.0",
+  "description": "Agent Skills for building AI applications with Moorcheh — the Universal Memory Layer for Agentic AI",
+  "keywords": [
+    "agent-skills",
+    "moorcheh",
+    "semantic-search",
+    "vector-database",
+    "rag",
+    "ai-memory",
+    "langchain",
+    "llamaindex",
+    "agentic-ai",
+    "cursor",
+    "claude-code",
+    "copilot",
+    "codex"
+  ],
+  "homepage": "https://github.com/moorcheh-ai/agent-skills",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/moorcheh-ai/agent-skills.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Moorcheh AI",
+    "url": "https://moorcheh.ai"
+  },
+  "files": [
+    "skills/",
+    "commands/",
+    ".claude-plugin/",
+    ".cursor-plugin/",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "agentskills": {
+    "skills": [
+      "skills/moorcheh",
+      "skills/moorcheh-cookbooks"
+    ]
+  }
+}
