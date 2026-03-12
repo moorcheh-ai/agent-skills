@@ -1,0 +1,15 @@
+{
+    "name": "moorcheh-agent-skills",
+    "description": "Moorcheh Agent Skills marketplace for Claude Code",
+    "plugins": [
+        {
+            "name": "moorcheh",
+            "description": "Moorcheh semantic search, AI memory, and RAG for Claude Code",
+            "version": "1.0.0",
+            "source": {
+                "source": "github",
+                "repo": "moorcheh-ai/agent-skills"
+            }
+        }
+    ]
+}

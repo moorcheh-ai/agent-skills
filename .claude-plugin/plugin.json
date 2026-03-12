@@ -1,8 +1,14 @@
 {
     "name": "moorcheh",
-    "description": "Moorcheh plugin for Claude Coding — semantic search, AI memory, and RAG",
-    "version": "0.1.0",
+    "description": "Moorcheh plugin for Claude Code — semantic search, AI memory, and RAG",
     "author": {
-        "name": "Moorcheh AI"
-    }
+        "name": "Moorcheh AI",
+        "url": "https://moorcheh.ai"
+    },
+    "commands": [
+        "./commands/"
+    ],
+    "skills": [
+        "./skills/"
+    ]
 }
