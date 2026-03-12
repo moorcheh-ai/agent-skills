@@ -4,7 +4,7 @@
     "owner": {
           "name": "Moorcheh AI",
           "url": "https://moorcheh.ai"
-    } 
+    }, 
     "plugins": [
         {
             "name": "moorcheh",
