@@ -1,6 +1,10 @@
 {
     "name": "moorcheh-agent-skills",
     "description": "Moorcheh Agent Skills marketplace for Claude Code",
+    "owner": {
+          "name": "Moorcheh AI",
+          "url": "https://moorcheh.ai"
+    } 
     "plugins": [
         {
             "name": "moorcheh",
