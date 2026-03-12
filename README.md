@@ -28,7 +28,11 @@ npx skills add moorcheh-ai/agent-skills
 ### Using Claude Code Plugin Manager
 
 ```bash
-/plugin install moorcheh@moorcheh-agent-skills
+# Step 1 — Add the marketplace (one time only)
+/plugin marketplace add moorcheh-ai/agent-skills
+
+# Step 2 — Install the plugin
+/plugin install moorcheh
 ```
 
 ### Manual: clone and point your agent to the directory
