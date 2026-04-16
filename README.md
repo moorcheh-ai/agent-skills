@@ -88,6 +88,7 @@ Blueprints for complete AI applications powered by Moorcheh:
 - **AI Q&A System** — Structured Q&A with multi-namespace routing
 - **Frontend Interface** — Next.js frontend (optional)
 - **LangChain Integration** — Use Moorcheh as a LangChain vector store
+- **LLM Wiki** — Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
 
 </details>
 
@@ -128,6 +129,8 @@ The skill is automatically discovered by compatible agents. Simply describe what
 - "Build a knowledge base chatbot using Moorcheh"
 - "Generate an AI answer from my documentation"
 - "Build a customer support bot with Moorcheh"
+- "Build an LLM Wiki knowledge base with Moorcheh"
+- "Set up a self-maintaining wiki using Karpathy's pattern"
 
 ## Requirements
 
