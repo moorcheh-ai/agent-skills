@@ -81,6 +81,8 @@ python skills/moorcheh/scripts/search.py --query "your search query" --namespace
 
 ### Data Operations
 - [Upload Text](skills/moorcheh/scripts/upload_text.py): Upload text documents with metadata to a namespace
+- [Upload File](skills/moorcheh/scripts/upload_file.py): Upload a file directly (PDF, TXT, MD, CSV, JSON, DOCX) to a namespace
+- [Deep Ingest](skills/moorcheh-cookbooks/scripts/deep_ingest.py): Stage large/binary files via a temporary Moorcheh namespace for wiki ingestion
 - [Example Data](skills/moorcheh/scripts/example_data.py): Create sample data for demos and testing
 
 ### Search & AI
@@ -101,6 +103,8 @@ The cookbooks skill provides blueprints for building complete AI applications:
 - **Customer Support Bot**: Build a customer support chatbot
 - **Semantic Search App**: Build a search application with ITS scoring
 - **AI Q&A System**: Build a question-answering system with structured output
+- **LLM Wiki**: Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
+- **Deep Ingest**: Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) via Moorcheh staging namespace — no local extraction needed
 
 ### Optional Frontend Guide
 - [Frontend Interface](skills/moorcheh-cookbooks/references/frontend_interface.md): Build a Next.js frontend for Moorcheh backends
