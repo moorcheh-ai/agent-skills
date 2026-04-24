@@ -18,7 +18,7 @@ POST https://api.moorcheh.ai/v1/answer
 | `threshold` | float | No | Minimum relevance score for context |
 | `temperature` | float | No | Response creativity (0.0–2.0, default: 0.7) |
 | `type` | string | No | Namespace type: `"text"` or `"vector"` |
-| `aiModel` | string | No | AI model to use (default: Claude Sonnet) |
+| `aiModel` | string | No | AI model to use (default: `anthropic.claude-sonnet-4-6`). **Important:** always pass this parameter explicitly — older SDK versions default to a model ID that returns 500 errors from Bedrock. |
 | `chatHistory` | array | No | Previous conversation turns |
 | `headerPrompt` | string | No | System prompt prepended to context |
 | `footerPrompt` | string | No | Instructions appended after context |
@@ -86,7 +86,7 @@ curl -X POST "https://api.moorcheh.ai/v1/answer" \
 ```json
 {
   "answer": "The main benefits include higher accuracy through ITS scoring, better performance with MIB technology, and explainable results...",
-  "model": "anthropic.claude-sonnet-4-5-20250929-v1:0",
+  "model": "anthropic.claude-sonnet-4-6",
   "contextCount": 3,
   "query": "What are the main benefits of Moorcheh?"
 }
@@ -117,7 +117,8 @@ with MoorchehClient(api_key="your-api-key") as client:
     # Basic RAG answer
     response = client.answer.generate(
         namespace="my-documents",
-        query="What are the main benefits of Moorcheh?"
+        query="What are the main benefits of Moorcheh?",
+        aiModel="anthropic.claude-sonnet-4-6"
     )
     print(f"Answer: {response['answer']}")
 

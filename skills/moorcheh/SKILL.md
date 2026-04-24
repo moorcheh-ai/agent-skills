@@ -32,6 +32,7 @@ For full environment setup, see [Environment Requirements](references/environmen
 ### Data Operations
 
 - [Upload Text Data](references/upload_text.md): Use to **upload text documents with metadata** to a text namespace. Documents are automatically embedded and indexed for semantic search.
+- [Upload File](references/upload_file.md): Use to **upload a file directly** (PDF, TXT, MD, CSV, JSON, DOCX) to a text namespace. Moorcheh handles parsing, chunking, and embedding automatically. **Prefer this over Upload Text when the user has a file on disk.**
 - [Upload Vectors](references/upload_vectors.md): Use to **upload pre-computed vector embeddings** to a vector namespace. Best when you have your own embedding pipeline.
 - [Delete Data](references/delete_data.md): Use to **remove specific documents or vectors** from a namespace.
 - [Create Example Data](references/example_data.md): Use to **create sample data for demos and testing** when no data is available.

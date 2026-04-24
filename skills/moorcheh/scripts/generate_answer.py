@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--query", required=True, help="Question to answer")
     parser.add_argument("--top-k", type=int, default=5, help="Number of context documents (default: 5)")
     parser.add_argument("--temperature", type=float, help="Response creativity (0.0-2.0)")
+    parser.add_argument("--model", default="anthropic.claude-sonnet-4-6", help="AI model ID (default: anthropic.claude-sonnet-4-6)")
     args = parser.parse_args()
 
     client = get_client()
@@ -20,7 +21,8 @@ def main():
         kwargs = {
             "namespace": args.namespace,
             "query": args.query,
-            "top_k": args.top_k
+            "top_k": args.top_k,
+            "aiModel": args.model
         }
         if args.temperature is not None:
             kwargs["temperature"] = args.temperature
