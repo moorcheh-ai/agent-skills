@@ -98,18 +98,7 @@ The agent:
 3. Creates `wiki/sources/<slug>.md`
 4. Creates or updates entity and concept pages; flags contradictions
 5. Updates `wiki/glossary.md`, `wiki/index.md`, `wiki/overview.md`
-6. Uploads all new/updated pages to Moorcheh:
-
-```python
-# What the agent does after each ingest:
-client.upload(
-    namespace="wiki-research",
-    documents=[
-        {"text": page_content, "metadata": {"type": "entity", "title": "...", "updated": "2026-04-16"}}
-        for page_content in updated_pages
-    ]
-)
-```
+6. Syncs all new/updated pages to Moorcheh using the **delete-then-upload** pattern (see [Sync on Update](#sync-on-update) below).
 
 7. Logs the run: `## [2026-04-16] ingest | Source Title`
 
@@ -164,6 +153,60 @@ Or via skill:
 /moorcheh:answer query "What are the main architectural tradeoffs?" namespace "wiki-research"
 ```
 
+### Sync on Update
+
+Whenever a wiki page is created or modified, the agent must sync it to Moorcheh. Because Moorcheh documents are immutable once uploaded, **updating a page requires deleting the old version first, then uploading the new one.**
+
+The `moorcheh_doc_id` in frontmatter is the stable key that connects a local file to its backend document.
+
+**Sync rules:**
+1. Every wiki page gets a deterministic `moorcheh_doc_id`: `{namespace}--{type}--{slug}`
+2. On **new page**: upload with that ID, set `moorcheh_uploaded: true`
+3. On **updated page**: delete the old doc by ID, upload the new content with the same ID, keep `moorcheh_uploaded: true`
+4. On **deleted page**: delete the doc by ID, remove the local file
+5. Never leave stale versions on the backend — always delete before re-upload
+
+```python
+import pathlib
+import re
+import moorcheh
+
+client = moorcheh.Client()
+NAMESPACE = "wiki-research"
+
+def sync_page(page_path: str):
+    """Delete old version (if any) and upload current content."""
+    content = pathlib.Path(page_path).read_text()
+    assert len(content.strip()) > 0, f"Refusing to sync empty file: {page_path}"
+
+    # Extract moorcheh_doc_id from frontmatter
+    match = re.search(r"moorcheh_doc_id:\s*(.+)", content)
+    if not match:
+        raise ValueError(f"Missing moorcheh_doc_id in {page_path}")
+    doc_id = match.group(1).strip()
+
+    # Step 1: Delete the old version (ignore errors if it doesn't exist yet)
+    try:
+        client.documents.delete(namespace_name=NAMESPACE, ids=[doc_id])
+    except Exception:
+        pass  # First upload — nothing to delete
+
+    # Step 2: Upload the new version with the same stable ID
+    metadata = {"source_file": page_path, "wiki_namespace": NAMESPACE}
+    client.documents.upload(
+        namespace_name=NAMESPACE,
+        documents=[{"id": doc_id, "text": content, **metadata}]
+    )
+
+    # Step 3: Ensure the flag is set (safe targeted replace)
+    if "moorcheh_uploaded: false" in content:
+        updated = content.replace("moorcheh_uploaded: false", "moorcheh_uploaded: true", 1)
+        assert len(updated) >= len(content) - 20
+        pathlib.Path(page_path).write_text(updated)
+```
+
+The agent calls `sync_page()` for every file it creates or modifies during ingest, query-save, or manual edits.
+
 ### Lint
 
 **Trigger:** `lint`
@@ -191,9 +234,12 @@ created: 2026-04-16
 updated: 2026-04-16
 sources: [source-file.pdf, other-source.md]
 tags: [competitive, pricing, 2026-q2]
+moorcheh_doc_id: wiki-research--entity--page-title   # deterministic ID for sync
 moorcheh_uploaded: false   # agent flips to true after upload
 ---
 ```
+
+The `moorcheh_doc_id` is the **stable identifier** that ties a local file to its Moorcheh document. Convention: `{namespace}--{type}--{slug}`. This ID must stay constant across updates — it is how the agent knows which backend document to delete before re-uploading.
 
 The `moorcheh_uploaded` flag is the sync status tracker. The agent maintains it. Run `lint` to catch any pages that slipped through.
 
@@ -258,43 +304,52 @@ Karpathy's original design uses `index.md` as the navigation layer — read the 
 ```python
 import moorcheh
 import pathlib
+import re
 
 client = moorcheh.Client()
 NAMESPACE = "wiki-research"
 
-# After agent writes a new wiki page, upload it
 def sync_page(page_path: str):
+    """Delete-then-upload: keeps local files and Moorcheh backend in sync."""
     content = pathlib.Path(page_path).read_text()
+    assert len(content.strip()) > 0, f"Refusing to sync empty file: {page_path}"
 
-    # Parse frontmatter to extract metadata
-    # (simplified — agent handles this automatically)
-    metadata = {
-        "source_file": page_path,
-        "wiki_namespace": NAMESPACE,
-    }
+    match = re.search(r"moorcheh_doc_id:\s*(.+)", content)
+    if not match:
+        raise ValueError(f"Missing moorcheh_doc_id in {page_path}")
+    doc_id = match.group(1).strip()
 
-    result = client.upload(
-        namespace=NAMESPACE,
-        documents=[{"text": content, "metadata": metadata}]
+    # Delete old version, then upload new
+    try:
+        client.documents.delete(namespace_name=NAMESPACE, ids=[doc_id])
+    except Exception:
+        pass
+    metadata = {"source_file": page_path, "wiki_namespace": NAMESPACE}
+    client.documents.upload(
+        namespace_name=NAMESPACE,
+        documents=[{"id": doc_id, "text": content, **metadata}]
     )
-    return result
 
-# Query the wiki with ITS scoring
+def delete_page(page_path: str):
+    """Remove a page from both local disk and Moorcheh."""
+    content = pathlib.Path(page_path).read_text()
+    match = re.search(r"moorcheh_doc_id:\s*(.+)", content)
+    if match:
+        client.documents.delete(namespace_name=NAMESPACE, ids=[match.group(1).strip()])
+    pathlib.Path(page_path).unlink()
+
 def query_wiki(question: str, top_k: int = 8):
-    results = client.search(
+    return client.search(
         query=question,
         namespaces=[NAMESPACE],
         top_k=top_k
     )
-    return results
 
-# Generate a RAG-powered answer
 def answer_question(question: str):
-    response = client.generate(
+    return client.generate(
         query=question,
         namespace=NAMESPACE
     )
-    return response
 ```
 
 ---
