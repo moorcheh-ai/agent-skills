@@ -60,3 +60,34 @@ For full environment setup, see [Environment Requirements](references/environmen
 - `404 Namespace not found`: Create the namespace first or check spelling (case-sensitive)
 - `400 Vector dimension mismatch`: Ensure vectors match the namespace's configured dimension
 - `429 Too Many Requests`: Implement exponential backoff
+
+## Code Generation Rules
+
+Follow these rules when generating Python code that uses the Moorcheh SDK:
+
+### No Unicode Emoji in Output
+
+Do **not** use emoji characters (e.g. ✅ ❌ 📁 ⏳ 🎉) in `print()` statements or log messages. On Windows with cp1252 encoding, these cause `UnicodeEncodeError` and mask actual success/failure output. Use plain ASCII prefixes instead:
+
+| Instead of | Use |
+|---|---|
+| `✅ Success` | `[OK] Success` |
+| `❌ Error` | `[ERROR] Error` |
+| `⏳ Waiting` | `[WAIT] Waiting` |
+| `📁 folder` | `- folder` |
+
+### Python SDK Uses snake_case
+
+The REST API uses camelCase (`aiModel`, `chatHistory`, `headerPrompt`, `footerPrompt`, `structuredResponse`). The Python SDK uses **snake_case**. Always use snake_case in Python code:
+
+| REST API (JSON/curl) | Python SDK kwarg |
+|---|---|
+| `aiModel` | `ai_model` |
+| `chatHistory` | `chat_history` |
+| `headerPrompt` | `header_prompt` |
+| `footerPrompt` | `footer_prompt` |
+| `structuredResponse` | `structured_response` |
+| `top_k` | `top_k` |
+| `namespace_name` | `namespace_name` |
+
+Using camelCase kwargs in Python will raise `TypeError` or be silently ignored by the SDK.
