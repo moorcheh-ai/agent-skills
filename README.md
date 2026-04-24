@@ -89,6 +89,7 @@ Blueprints for complete AI applications powered by Moorcheh:
 - **Frontend Interface** — Next.js frontend (optional)
 - **LangChain Integration** — Use Moorcheh as a LangChain vector store
 - **LLM Wiki** — Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
+- **Deep Ingest** — Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) without local extraction — Moorcheh handles parsing, chunking, and indexing automatically
 
 </details>
 
@@ -131,6 +132,7 @@ The skill is automatically discovered by compatible agents. Simply describe what
 - "Build a customer support bot with Moorcheh"
 - "Build an LLM Wiki knowledge base with Moorcheh"
 - "Set up a self-maintaining wiki using Karpathy's pattern"
+- "Ingest a large PDF into my wiki using deep ingest"
 
 ## Requirements
 
