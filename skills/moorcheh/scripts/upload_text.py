@@ -18,15 +18,15 @@ def main():
         with open(args.file, "r", encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
-        print(f"❌ File not found: {args.file}")
+        print(f"[ERROR] File not found: {args.file}")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"❌ Invalid JSON in {args.file}: {e}")
+        print(f"[ERROR] Invalid JSON in {args.file}: {e}")
         sys.exit(1)
 
     documents = data if isinstance(data, list) else data.get("documents", [])
     if not documents:
-        print("❌ No documents found in file. Expected a JSON array or {\"documents\": [...]}")
+        print("[ERROR] No documents found in file. Expected a JSON array or {\"documents\": [...]}")
         sys.exit(1)
 
     client = get_client()
@@ -36,10 +36,10 @@ def main():
             documents=documents
         )
         count = result.get("documents_processed", len(documents))
-        print(f"✅ Uploaded {count} document(s) to '{args.namespace}'")
-        print("⏳ Documents are being indexed. Wait a few seconds before searching.")
+        print(f"[OK] Uploaded {count} document(s) to '{args.namespace}'")
+        print("[WAIT] Documents are being indexed. Wait a few seconds before searching.")
     except Exception as e:
-        print(f"❌ Error uploading documents: {e}")
+        print(f"[ERROR] Error uploading documents: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

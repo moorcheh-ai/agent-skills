@@ -22,7 +22,7 @@ def main():
             "namespace": args.namespace,
             "query": args.query,
             "top_k": args.top_k,
-            "aiModel": args.model
+            "ai_model": args.model
         }
         if args.temperature is not None:
             kwargs["temperature"] = args.temperature
@@ -34,7 +34,7 @@ def main():
         print(f"Model: {response.get('model', 'unknown')}")
         print(f"Context documents used: {response.get('contextCount', 0)}")
     except Exception as e:
-        print(f"❌ Error generating answer: {e}")
+        print(f"[ERROR] Error generating answer: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -50,7 +50,7 @@ def main():
         exec_time = results.get("execution_time", 0)
         print(f"Execution time: {exec_time:.3f}s")
     except Exception as e:
-        print(f"❌ Error searching: {e}")
+        print(f"[ERROR] Error searching: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
