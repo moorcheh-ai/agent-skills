@@ -118,7 +118,7 @@ with MoorchehClient(api_key="your-api-key") as client:
     response = client.answer.generate(
         namespace="my-documents",
         query="What are the main benefits of Moorcheh?",
-        aiModel="anthropic.claude-sonnet-4-6"
+        ai_model="anthropic.claude-sonnet-4-6"
     )
     print(f"Answer: {response['answer']}")
 
@@ -126,7 +126,7 @@ with MoorchehClient(api_key="your-api-key") as client:
     response = client.answer.generate(
         namespace="my-documents",
         query="Tell me more about the second point",
-        chatHistory=[
+        chat_history=[
             {"role": "user", "content": "What are key features?"},
             {"role": "assistant", "content": "The key features are..."}
         ]

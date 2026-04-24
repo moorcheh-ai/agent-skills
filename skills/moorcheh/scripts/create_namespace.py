@@ -24,9 +24,9 @@ def main():
         if args.dimension:
             kwargs["vector_dimension"] = args.dimension
         client.namespaces.create(**kwargs)
-        print(f"✅ Namespace '{args.name}' created successfully (type: {args.type})")
+        print(f"[OK] Namespace '{args.name}' created successfully (type: {args.type})")
     except Exception as e:
-        print(f"❌ Error creating namespace: {e}")
+        print(f"[ERROR] Error creating namespace: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -19,13 +19,13 @@ def main():
         for ns in namespaces:
             ns_type = ns.get("type", "unknown")
             name = ns.get("namespace_name", "unnamed")
-            print(f"  📁 {name} (type: {ns_type})")
+            print(f"  - {name} (type: {ns_type})")
             if ns_type == "vector":
                 dim = ns.get("vector_dimension", "?")
-                print(f"     Dimension: {dim}")
+                print(f"    Dimension: {dim}")
         print()
     except Exception as e:
-        print(f"❌ Error listing namespaces: {e}")
+        print(f"[ERROR] Error listing namespaces: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

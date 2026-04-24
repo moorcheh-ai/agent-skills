@@ -93,7 +93,8 @@ ingest raw/quarterly-report.pdf
 ```
 
 The agent:
-1. Reads the source document
+0. **Pre-check (mandatory):** Check file extension and size. If binary format (PDF, DOCX, XLSX) or > 200K chars, inform the user and switch to [Deep Ingest](#deep-ingest-large--binary-documents) automatically. Do not attempt to read the file directly.
+1. Reads the source document (text files < 200K chars only)
 2. Discusses key takeaways with you
 3. Creates `wiki/sources/<slug>.md`
 4. Creates or updates entity and concept pages; flags contradictions
@@ -103,6 +104,33 @@ The agent:
 7. Logs the run: `## [2026-04-16] ingest | Source Title`
 
 One source typically touches 10–15 wiki pages. Stay involved — read the summaries, guide the agent on what to emphasize.
+
+### Deep Ingest (Large / Binary Documents)
+
+For documents that exceed the LLM prompt window (~200K chars) or are in binary formats (PDF, DOCX, XLSX), use **deep ingest** instead of standard ingest. Standard ingest silently truncates large files with no warning.
+
+**Trigger:** `deep-ingest raw/<filename>`
+
+| Document size | Format | Method |
+|---|---|---|
+| < 100K characters | Text (MD, TXT, CSV) | Standard ingest |
+| 100K–200K characters | Text | Standard ingest (verify no truncation) |
+| > 200K characters | Any | **Deep ingest** |
+| Any size | PDF, DOCX, XLSX | **Deep ingest** — Moorcheh handles extraction |
+
+The agent:
+1. Creates a temporary staging namespace (`staging-<filename-slug>`)
+2. Uploads the raw file via `upload_file` — Moorcheh extracts, chunks, and indexes it
+3. Waits ~15 seconds for indexing
+4. Queries the staging namespace to discover document structure (`top_k=20`)
+5. Queries chapter-by-chapter (`top_k=15`) to retrieve full content
+6. Builds wiki pages locally from retrieved content (same as standard ingest from here)
+7. Syncs wiki pages to the wiki namespace
+8. Deletes the staging namespace
+
+**No local extraction needed.** No pymupdf, no docx parser, no TOC scripts. Moorcheh handles all of that.
+
+Full workflow: [references/deep_ingest.md](references/deep_ingest.md)
 
 ### Query
 

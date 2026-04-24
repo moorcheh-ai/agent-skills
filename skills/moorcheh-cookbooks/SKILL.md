@@ -37,6 +37,7 @@ Then proceed to the specific cookbook reference below.
 - [AI Q&A System](references/ai_qa_system.md): Build a question-answering system with structured output, custom prompts, and multi-namespace search.
 - **LLM Wiki** — Self-maintaining personal knowledge base using Karpathy's LLM Wiki
   pattern extended with Moorcheh ITS search. See [references/llm_wiki.md](references/llm_wiki.md).
+- [Deep Ingest](references/deep_ingest.md): Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) by uploading to a Moorcheh staging namespace. No local extraction needed — Moorcheh handles parsing, chunking, and indexing.
 
 ## Integrations
 

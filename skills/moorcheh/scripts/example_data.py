@@ -72,15 +72,15 @@ def main():
         if not args.skip_create:
             print(f"Creating namespace '{args.namespace}'...")
             client.namespaces.create(namespace_name=args.namespace, type="text")
-            print(f"✅ Namespace created")
+            print("[OK] Namespace created")
 
         print(f"Uploading {len(SAMPLE_DOCUMENTS)} sample documents...")
         client.documents.upload(
             namespace_name=args.namespace,
             documents=SAMPLE_DOCUMENTS
         )
-        print(f"✅ Uploaded {len(SAMPLE_DOCUMENTS)} documents")
-        print("⏳ Waiting for indexing...")
+        print(f"[OK] Uploaded {len(SAMPLE_DOCUMENTS)} documents")
+        print("[WAIT] Waiting for indexing...")
         time.sleep(5)
 
         print("\nTesting search...")
@@ -89,15 +89,15 @@ def main():
             query="How is AI used in healthcare?"
         )
         matches = results.get("results", [])
-        print(f"✅ Search returned {len(matches)} results")
+        print(f"[OK] Search returned {len(matches)} results")
         if matches:
             top = matches[0]
             print(f"   Top result: [{top.get('label', '?')}] {top.get('text', '')[:80]}...")
 
-        print(f"\n🎉 Demo data ready in namespace '{args.namespace}'")
+        print(f"\n[OK] Demo data ready in namespace '{args.namespace}'")
         print("Try: /moorcheh:search query \"quantum computing\" namespaces \"" + args.namespace + "\"")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"[ERROR] Error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

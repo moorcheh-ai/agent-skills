@@ -52,9 +52,15 @@ with MoorchehClient(api_key="your-api-key") as client:
 ## Script
 
 ```bash
+# Upload a single file
 uv run skills/moorcheh/scripts/upload_file.py \
   --namespace "my-documents" \
   --file "report.pdf"
+
+# Batch upload all supported files in a directory
+uv run skills/moorcheh/scripts/upload_file.py \
+  --namespace "my-documents" \
+  --dir "wiki/"
 ```
 
 ## When to use upload_file vs upload_text
