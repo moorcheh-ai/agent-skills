@@ -93,7 +93,8 @@ ingest raw/quarterly-report.pdf
 ```
 
 The agent:
-1. Reads the source document
+0. **Pre-check (mandatory):** Check file extension and size. If binary format (PDF, DOCX, XLSX) or > 200K chars, inform the user and switch to [Deep Ingest](#deep-ingest-large--binary-documents) automatically. Do not attempt to read the file directly.
+1. Reads the source document (text files < 200K chars only)
 2. Discusses key takeaways with you
 3. Creates `wiki/sources/<slug>.md`
 4. Creates or updates entity and concept pages; flags contradictions

@@ -63,6 +63,35 @@ uv pip install moorcheh-sdk requests
 
 When the user asks to ingest a document into the wiki, the agent must check file type and size **before** attempting to read it.
 
+### Pre-check (mandatory — run before every ingest)
+
+Before reading any source file:
+1. Check file extension and size
+2. If binary format (PDF, DOCX, XLSX) or file exceeds 200K characters:
+   - Inform the user: "This document will be ingested via Moorcheh deep ingest."
+   - Upload to staging namespace via `upload_file` (Moorcheh handles extraction)
+   - Switch to deep ingest workflow automatically
+3. If plain text < 200K chars: proceed with standard ingest
+
+```python
+import os
+
+BINARY_EXTENSIONS = {".pdf", ".docx", ".xlsx", ".xls", ".doc", ".pptx"}
+MAX_DIRECT_READ = 200_000  # characters
+
+def should_deep_ingest(file_path: str) -> bool:
+    ext = os.path.splitext(file_path)[1].lower()
+    if ext in BINARY_EXTENSIONS:
+        return True
+    try:
+        size = os.path.getsize(file_path)
+        if size > MAX_DIRECT_READ:
+            return True
+    except OSError:
+        return True  # can't stat — safer to deep ingest
+    return False
+```
+
 **For plain text files < 200K characters (MD, TXT, CSV):**
 Use standard ingest — read the file directly into context and build wiki pages.
 
