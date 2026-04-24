@@ -199,6 +199,30 @@ The `moorcheh_uploaded` flag is the sync status tracker. The agent maintains it.
 
 ---
 
+## File Safety Rules (Critical)
+
+**These rules prevent data loss.** The flag-update step (`moorcheh_uploaded: false → true`) has caused agents to wipe wiki files to 0 bytes. Follow these rules without exception:
+
+1. **Read-before-write.** Always read the full file content into a variable before modifying anything. Never open a file for writing without holding its contents in memory first.
+2. **Validate before flush.** After composing the new content, assert that its length is ≥ the original length minus a small tolerance (e.g. 20 chars for whitespace changes). If the new content is shorter than 50% of the original, **abort the write and log a warning.**
+3. **Atomic flag updates.** When updating only frontmatter flags, use a targeted replacement (e.g. regex or string replace on the YAML block) — never rewrite the entire file body.
+4. **Never write empty content.** Before any file write, check: `if len(new_content.strip()) == 0: abort`.
+5. **Batch flag updates carefully.** When flipping `moorcheh_uploaded` across many files in a loop, process one file at a time and verify each write before moving to the next.
+
+```python
+# Safe flag update pattern
+def safe_update_flag(path: str):
+    content = pathlib.Path(path).read_text()
+    assert len(content) > 0, f"Refusing to touch empty file: {path}"
+
+    updated = content.replace("moorcheh_uploaded: false", "moorcheh_uploaded: true", 1)
+    assert len(updated) >= len(content) - 20, f"Content shrank unexpectedly: {path}"
+
+    pathlib.Path(path).write_text(updated)
+```
+
+---
+
 ## Namespace Convention
 
 | Wiki purpose | Namespace |
