@@ -59,6 +59,32 @@ uv pip install moorcheh-sdk requests
 └── package.json
 ```
 
+## Ingest Workflow
+
+When the user asks to ingest a document into the wiki, the agent must check file type and size **before** attempting to read it.
+
+**For plain text files < 200K characters (MD, TXT, CSV):**
+Use standard ingest — read the file directly into context and build wiki pages.
+
+**For large documents (> 200K characters or any PDF/DOCX/XLSX binary format):**
+Use the Deep Ingest workflow instead of reading the file directly.
+See [references/deep_ingest.md](skills/moorcheh-cookbooks/references/deep_ingest.md) for the full procedure.
+
+The agent should:
+1. Check file type and size before reading
+2. If binary format (PDF, DOCX, XLSX) or > 200K chars:
+   - Upload the file to a Moorcheh staging namespace via `upload_file`
+   - Moorcheh handles extraction, chunking, and indexing automatically
+   - Query the staging namespace to build wiki pages
+3. If plain text < 200K chars: standard ingest (read directly)
+
+| Document size | Format | Method |
+|---|---|---|
+| < 100K characters | Text (MD, TXT, CSV) | Standard ingest |
+| 100K–200K characters | Text | Standard ingest (verify no truncation) |
+| > 200K characters | Any | Deep ingest |
+| Any size | PDF, DOCX, XLSX | Deep ingest — Moorcheh handles extraction |
+
 ## Running Scripts
 
 All scripts are in `skills/moorcheh/scripts/` and accept command-line arguments.
