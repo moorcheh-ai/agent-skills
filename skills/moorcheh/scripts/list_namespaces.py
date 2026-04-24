@@ -10,7 +10,8 @@ from moorcheh_conn import get_client
 def main():
     client = get_client()
     try:
-        namespaces = client.namespaces.list()
+        response = client.namespaces.list()
+        namespaces = response.get("namespaces", []) if isinstance(response, dict) else response
         if not namespaces:
             print("No namespaces found. Create one with create_namespace.py")
             return

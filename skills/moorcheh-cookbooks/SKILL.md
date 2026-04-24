@@ -22,6 +22,11 @@ Follow these shared guidelines before generating any cookbook app:
 - [Project Setup Contract](references/project_setup.md)
 - [Environment Requirements](references/environment_requirements.md)
 
+### Code Generation Rules
+
+1. **No Unicode emoji in output.** Do not use ✅ ❌ 📁 ⏳ 🎉 or any emoji in `print()` or log messages. They crash on Windows cp1252 terminals. Use `[OK]`, `[ERROR]`, `[WAIT]` instead.
+2. **Python SDK uses snake_case.** The REST API uses camelCase (`aiModel`, `chatHistory`) but the Python SDK uses snake_case (`ai_model`, `chat_history`). Always use snake_case in Python code. Using camelCase kwargs will fail silently or raise `TypeError`.
+
 Then proceed to the specific cookbook reference below.
 
 ## Cookbook Index

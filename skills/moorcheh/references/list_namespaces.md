@@ -42,8 +42,9 @@ curl -X GET "https://api.moorcheh.ai/v1/namespaces" \
 from moorcheh_sdk import MoorchehClient
 
 with MoorchehClient(api_key="your-api-key") as client:
-    namespaces = client.namespaces.list()
-    for ns in namespaces:
+    response = client.namespaces.list()
+    # SDK returns {"namespaces": [...]}
+    for ns in response["namespaces"]:
         print(f"Name: {ns['namespace_name']}, Type: {ns['type']}")
 ```
 

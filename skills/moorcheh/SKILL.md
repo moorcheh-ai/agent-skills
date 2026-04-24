@@ -32,6 +32,7 @@ For full environment setup, see [Environment Requirements](references/environmen
 ### Data Operations
 
 - [Upload Text Data](references/upload_text.md): Use to **upload text documents with metadata** to a text namespace. Documents are automatically embedded and indexed for semantic search.
+- [Upload File](references/upload_file.md): Use to **upload a file directly** (PDF, TXT, MD, CSV, JSON, DOCX) to a text namespace. Moorcheh handles parsing, chunking, and embedding automatically. **Prefer this over Upload Text when the user has a file on disk.**
 - [Upload Vectors](references/upload_vectors.md): Use to **upload pre-computed vector embeddings** to a vector namespace. Best when you have your own embedding pipeline.
 - [Delete Data](references/delete_data.md): Use to **remove specific documents or vectors** from a namespace.
 - [Create Example Data](references/example_data.md): Use to **create sample data for demos and testing** when no data is available.
@@ -59,3 +60,34 @@ For full environment setup, see [Environment Requirements](references/environmen
 - `404 Namespace not found`: Create the namespace first or check spelling (case-sensitive)
 - `400 Vector dimension mismatch`: Ensure vectors match the namespace's configured dimension
 - `429 Too Many Requests`: Implement exponential backoff
+
+## Code Generation Rules
+
+Follow these rules when generating Python code that uses the Moorcheh SDK:
+
+### No Unicode Emoji in Output
+
+Do **not** use emoji characters (e.g. ✅ ❌ 📁 ⏳ 🎉) in `print()` statements or log messages. On Windows with cp1252 encoding, these cause `UnicodeEncodeError` and mask actual success/failure output. Use plain ASCII prefixes instead:
+
+| Instead of | Use |
+|---|---|
+| `✅ Success` | `[OK] Success` |
+| `❌ Error` | `[ERROR] Error` |
+| `⏳ Waiting` | `[WAIT] Waiting` |
+| `📁 folder` | `- folder` |
+
+### Python SDK Uses snake_case
+
+The REST API uses camelCase (`aiModel`, `chatHistory`, `headerPrompt`, `footerPrompt`, `structuredResponse`). The Python SDK uses **snake_case**. Always use snake_case in Python code:
+
+| REST API (JSON/curl) | Python SDK kwarg |
+|---|---|
+| `aiModel` | `ai_model` |
+| `chatHistory` | `chat_history` |
+| `headerPrompt` | `header_prompt` |
+| `footerPrompt` | `footer_prompt` |
+| `structuredResponse` | `structured_response` |
+| `top_k` | `top_k` |
+| `namespace_name` | `namespace_name` |
+
+Using camelCase kwargs in Python will raise `TypeError` or be silently ignored by the SDK.
