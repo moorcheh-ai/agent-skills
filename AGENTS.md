@@ -85,6 +85,20 @@ The agent should:
 | > 200K characters | Any | Deep ingest |
 | Any size | PDF, DOCX, XLSX | Deep ingest — Moorcheh handles extraction |
 
+## Uploading to Moorcheh
+
+When uploading local files to a Moorcheh namespace, **always prefer `upload_file`** over constructing JSON payloads with `upload_text`. The agent never needs to read or modify the file contents for upload.
+
+```python
+# Preferred: upload file directly (agent never reads/modifies the file)
+client.documents.upload_file(namespace_name="wiki-<topic>", file_path="wiki/<page>.md")
+```
+
+Or via script:
+```bash
+uv run skills/moorcheh/scripts/upload_file.py --namespace "wiki-<topic>" --file "wiki/<page>.md"
+```
+
 ## Running Scripts
 
 All scripts are in `skills/moorcheh/scripts/` and accept command-line arguments.

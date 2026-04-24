@@ -18,3 +18,17 @@ The agent should:
    - Moorcheh handles extraction, chunking, and indexing automatically
    - Query the staging namespace to build wiki pages
 3. If plain text < 200K chars: standard ingest (read directly)
+
+## Uploading to Moorcheh
+
+When uploading local files to a Moorcheh namespace, **always prefer `upload_file`** over constructing JSON payloads with `upload_text`. The agent never needs to read or modify the file contents for upload.
+
+```python
+# Preferred: upload file directly (agent never reads/modifies the file)
+client.documents.upload_file(namespace_name="wiki-<topic>", file_path="wiki/<page>.md")
+```
+
+Or via script:
+```bash
+uv run skills/moorcheh/scripts/upload_file.py --namespace "wiki-<topic>" --file "wiki/<page>.md"
+```
