@@ -1,4 +1,4 @@
-# Moorcheh Agent Skills — Setup Instructions
+# Moorcheh Agent Skills- Setup Instructions
 
 This document provides setup instructions for AI agents using the Moorcheh skill and plugin.
 
@@ -17,10 +17,7 @@ If the user does not have an account yet, direct them to the console to register
 export MOORCHEH_API_KEY="your-api-key-here"
 ```
 
-Optional (defaults to `https://api.moorcheh.ai/v1`):
-```bash
-export MOORCHEH_BASE_URL="https://api.moorcheh.ai/v1"
-```
+The Moorcheh API is at **https://api.moorcheh.ai/v1**- use that URL for REST calls; the Python SDK uses it by default.
 
 ### 3. Python Runtime
 
@@ -63,7 +60,7 @@ uv pip install moorcheh-sdk requests
 
 When the user asks to ingest a document into the wiki, the agent must check file type and size **before** attempting to read it.
 
-### Pre-check (mandatory — run before every ingest)
+### Pre-check (mandatory- run before every ingest)
 
 Before reading any source file:
 1. Check file extension and size
@@ -88,12 +85,12 @@ def should_deep_ingest(file_path: str) -> bool:
         if size > MAX_DIRECT_READ:
             return True
     except OSError:
-        return True  # can't stat — safer to deep ingest
+        return True  # can't stat- safer to deep ingest
     return False
 ```
 
 **For plain text files < 200K characters (MD, TXT, CSV):**
-Use standard ingest — read the file directly into context and build wiki pages.
+Use standard ingest- read the file directly into context and build wiki pages.
 
 **For large documents (> 200K characters or any PDF/DOCX/XLSX binary format):**
 Use the Deep Ingest workflow instead of reading the file directly.
@@ -112,7 +109,7 @@ The agent should:
 | < 100K characters | Text (MD, TXT, CSV) | Standard ingest |
 | 100K–200K characters | Text | Standard ingest (verify no truncation) |
 | > 200K characters | Any | Deep ingest |
-| Any size | PDF, DOCX, XLSX | Deep ingest — Moorcheh handles extraction |
+| Any size | PDF, DOCX, XLSX | Deep ingest- Moorcheh handles extraction |
 
 ## Uploading to Moorcheh
 
@@ -150,7 +147,11 @@ python skills/moorcheh/scripts/search.py --query "your search query" --namespace
 
 ### Data Operations
 - [Upload Text](skills/moorcheh/scripts/upload_text.py): Upload text documents with metadata to a namespace
-- [Upload File](skills/moorcheh/scripts/upload_file.py): Upload a file directly (PDF, TXT, MD, CSV, JSON, DOCX) to a namespace
+- [Get Documents](skills/moorcheh/scripts/get_documents.py): Retrieve indexed documents by ID (comma-separated, max 100)
+- [Upload File](skills/moorcheh/scripts/upload_file.py): Upload files (PDF, DOCX, XLSX, TXT, MD, CSV, JSON) via SDK pre-signed S3 flow (large files supported)
+- [Fetch Text Data](skills/moorcheh/scripts/fetch_text_data.py): List text/summary chunks in a text namespace (up to 100 items)
+- [List Files](skills/moorcheh/scripts/list_files.py): List raw file objects in document storage for a namespace
+- [Delete Files](skills/moorcheh/scripts/delete_files.py): Delete storage files by name (comma-separated list)
 - [Deep Ingest](skills/moorcheh-cookbooks/scripts/deep_ingest.py): Stage large/binary files via a temporary Moorcheh namespace for wiki ingestion
 - [Example Data](skills/moorcheh/scripts/example_data.py): Create sample data for demos and testing
 
@@ -161,8 +162,8 @@ python skills/moorcheh/scripts/search.py --query "your search query" --namespace
 ## Dependencies
 
 Scripts require:
-- `moorcheh-sdk` — Official Moorcheh Python SDK
-- `requests` — HTTP library (fallback for direct API calls)
+- `moorcheh-sdk`- Official Moorcheh Python SDK
+- `requests`- HTTP library (fallback for direct API calls)
 
 ## Moorcheh Cookbooks
 
@@ -173,7 +174,7 @@ The cookbooks skill provides blueprints for building complete AI applications:
 - **Semantic Search App**: Build a search application with ITS scoring
 - **AI Q&A System**: Build a question-answering system with structured output
 - **LLM Wiki**: Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
-- **Deep Ingest**: Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) via Moorcheh staging namespace — no local extraction needed
+- **Deep Ingest**: Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) via Moorcheh staging namespace- no local extraction needed
 
 ### Optional Frontend Guide
 - [Frontend Interface](skills/moorcheh-cookbooks/references/frontend_interface.md): Build a Next.js frontend for Moorcheh backends

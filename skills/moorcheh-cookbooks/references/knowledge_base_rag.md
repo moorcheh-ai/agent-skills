@@ -78,13 +78,13 @@ def ask_knowledge_base(question: str, chat_history: list = None) -> dict:
         "temperature": 0.3  # Low temp for factual answers
     }
     if chat_history:
-        kwargs["chatHistory"] = chat_history
+        kwargs["chat_history"] = chat_history
 
     response = client.answer.generate(**kwargs)
     return {
         "answer": response.get("answer"),
         "model": response.get("model"),
-        "context_count": response.get("contextCount", 0)
+        "context_count": response.get("context_count", 0)
     }
 
 # Wait for indexing
@@ -104,16 +104,16 @@ def ask_structured(question: str) -> dict:
     response = client.answer.generate(
         namespace="knowledge-base",
         query=question,
-        structuredResponse={"enabled": True}
+        structured_response={"enabled": True}
     )
     return response
 
 result = ask_structured("Summarize the main topics in our knowledge base")
-structured = result.get("structuredData", {})
+structured = result.get("structured_data", {})
 print(f"Answer: {structured.get('answer')}")
 print(f"Confidence: {structured.get('confidence')}")
 print(f"Topics: {structured.get('topics')}")
-print(f"Follow-up questions: {structured.get('followUpQuestions')}")
+print(f"Follow-up questions: {structured.get('follow_up_questions')}")
 ```
 
 ### Step 5: Build a FastAPI Server

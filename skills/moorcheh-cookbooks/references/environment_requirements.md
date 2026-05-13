@@ -8,10 +8,11 @@ See the core skill's [Environment Requirements](../../moorcheh/references/enviro
 # Required
 export MOORCHEH_API_KEY="your-api-key-here"
 
-# Optional
-export MOORCHEH_BASE_URL="https://api.moorcheh.ai/v1"
+# Optional (app-specific)
 export MOORCHEH_NAMESPACE="your-namespace-name"
 ```
+
+Use **https://api.moorcheh.ai/v1** for Moorcheh REST requests in examples and HTTP clients.
 
 ## Additional Dependencies for Cookbooks
 

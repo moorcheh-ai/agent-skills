@@ -18,8 +18,8 @@ def upload_single(client, namespace, file_path):
 def main():
     parser = argparse.ArgumentParser(description="Upload a file or directory to Moorcheh")
     parser.add_argument("--namespace", required=True, help="Target namespace name")
-    parser.add_argument("--file", help="Path to a single file (PDF, TXT, MD, CSV, JSON, DOCX)")
-    parser.add_argument("--dir", help="Path to directory — uploads all supported files")
+    parser.add_argument("--file", help="Path to a single file (PDF, TXT, MD, CSV, JSON, DOCX, XLSX)")
+    parser.add_argument("--dir", help="Path to directory- uploads all supported files")
     args = parser.parse_args()
 
     if not args.file and not args.dir:
@@ -40,7 +40,7 @@ def main():
             if not os.path.isdir(args.dir):
                 print(f"[ERROR] Directory not found: {args.dir}")
                 sys.exit(1)
-            extensions = ("*.md", "*.txt", "*.pdf", "*.docx", "*.csv", "*.json")
+            extensions = ("*.md", "*.txt", "*.pdf", "*.docx", "*.xlsx", "*.csv", "*.json")
             files = []
             for ext in extensions:
                 files.extend(glob.glob(os.path.join(args.dir, ext)))

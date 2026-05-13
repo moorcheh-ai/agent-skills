@@ -12,8 +12,13 @@ def main():
     parser.add_argument("--query", required=True, help="Search query text")
     parser.add_argument("--namespaces", required=True, help="Comma-separated namespace names")
     parser.add_argument("--top-k", type=int, default=10, help="Number of results (default: 10)")
-    parser.add_argument("--threshold", type=float, help="Minimum relevance score (0.0-1.0)")
+    parser.add_argument("--threshold", type=float, help="Minimum relevance score (0.0-1.0); required with --kiosk-mode")
+    parser.add_argument("--kiosk-mode", action="store_true", help="Enable kiosk mode (requires --threshold)")
     args = parser.parse_args()
+
+    if args.kiosk_mode and args.threshold is None:
+        print("[ERROR] --threshold is required when --kiosk-mode is set")
+        sys.exit(1)
 
     namespaces = [ns.strip() for ns in args.namespaces.split(",")]
 
@@ -26,6 +31,8 @@ def main():
         }
         if args.threshold is not None:
             kwargs["threshold"] = args.threshold
+        if args.kiosk_mode:
+            kwargs["kiosk_mode"] = True
 
         results = client.similarity_search.query(**kwargs)
         matches = results.get("results", [])

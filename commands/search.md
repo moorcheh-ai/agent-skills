@@ -22,9 +22,13 @@ When necessary, use AskUserQuestion to make entering arguments easier.
 2. If namespaces are missing:
    - Run `/moorcheh:namespaces` to list available namespaces
    - Use AskUserQuestion to prompt user to select
-3. Run the search script:
+3. Run the search script (API uses snake_case; CLI flags use kebab-case):
    ```bash
    uv run ${SKILL_ROOT}/skills/moorcheh/scripts/search.py --query "USER_QUERY" --namespaces "NS1,NS2" --top-k 10
+   ```
+   Optional **kiosk mode** (filters low relevance- requires a threshold):
+   ```bash
+   uv run ${SKILL_ROOT}/skills/moorcheh/scripts/search.py --query "USER_QUERY" --namespaces "NS1" --top-k 10 --kiosk-mode --threshold 0.15
    ```
 4. Display results with ITS scores and relevance labels
 

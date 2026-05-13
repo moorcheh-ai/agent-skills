@@ -32,7 +32,7 @@ def main():
         print(f"Question: {args.query}\n")
         print(f"Answer: {response.get('answer', 'No answer generated')}\n")
         print(f"Model: {response.get('model', 'unknown')}")
-        print(f"Context documents used: {response.get('contextCount', 0)}")
+        print(f"Context documents used: {response.get('context_count', 0)}")
     except Exception as e:
         print(f"[ERROR] Error generating answer: {e}")
         sys.exit(1)

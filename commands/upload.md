@@ -30,6 +30,8 @@ When necessary, use AskUserQuestion to make entering arguments easier.
 
 ## Supported Formats
 
+This command drives **`upload_text.py`**- JSON **text documents** only (`id` + `text` per row). For **PDF, DOCX, XLSX**, or other files on disk, use **`upload_file.py`** (pre-signed URL flow) instead; see [skills/moorcheh/references/upload_file.md](../skills/moorcheh/references/upload_file.md). Large or binary ingests may follow the deep-ingest cookbook in [AGENTS.md](../AGENTS.md).
+
 The JSON file should contain either:
 - An array of document objects: `[{"id": "...", "text": "...", ...}]`
 - An object with documents key: `{"documents": [{"id": "...", "text": "...", ...}]}`

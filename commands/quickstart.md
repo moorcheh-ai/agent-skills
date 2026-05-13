@@ -1,5 +1,5 @@
 ---
-description: Interactive onboarding — set up environment, create namespace, upload sample data, and explore Moorcheh
+description: Interactive onboarding- set up environment, create namespace, upload sample data, and explore Moorcheh
 argument-hint:
 allowed-tools: Bash(uv:*), Bash(pip:*), Bash(python:*), AskUserQuestion, Skill
 ---
@@ -48,8 +48,9 @@ Interactive onboarding for new Moorcheh users. Guides through environment setup,
    ```
 
 8. Show the user available commands:
-   - `/moorcheh:search` — Semantic search
-   - `/moorcheh:answer` — AI-powered answers
-   - `/moorcheh:namespaces` — Manage namespaces
-   - `/moorcheh:upload` — Upload data
-   - `/moorcheh:explore` — Explore data
+   - `/moorcheh:search`- Semantic search
+   - `/moorcheh:answer`- AI-powered answers
+   - `/moorcheh:namespaces`- List namespaces
+   - `/moorcheh:upload`- Upload JSON text documents
+   - `/moorcheh:explore`- Preview namespace contents
+   - `/moorcheh:llm-wiki`- LLM Wiki (optional)

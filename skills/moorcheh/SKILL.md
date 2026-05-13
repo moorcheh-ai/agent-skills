@@ -3,7 +3,7 @@ name: moorcheh
 description: Use this skill to interact with Moorcheh, the Universal Memory Layer for Agentic AI. Provides semantic search with ITS (Information-Theoretic Scoring), namespace management, text and vector data operations, and AI-powered answer generation (RAG). Use when building applications that need semantic search, knowledge bases, document Q&A, AI memory systems, or retrieval-augmented generation.
 ---
 
-# Moorcheh — Universal Memory Layer Operations
+# Moorcheh- Universal Memory Layer Operations
 
 This skill provides comprehensive access to the Moorcheh platform including namespace management, data operations, semantic search with ITS scoring, and AI-powered answer generation.
 
@@ -32,8 +32,12 @@ For full environment setup, see [Environment Requirements](references/environmen
 ### Data Operations
 
 - [Upload Text Data](references/upload_text.md): Use to **upload text documents with metadata** to a text namespace. Documents are automatically embedded and indexed for semantic search.
-- [Upload File](references/upload_file.md): Use to **upload a file directly** (PDF, TXT, MD, CSV, JSON, DOCX) to a text namespace. Moorcheh handles parsing, chunking, and embedding automatically. **Prefer this over Upload Text when the user has a file on disk.**
+- [Get Documents](references/get_documents.md): Use to **fetch indexed text documents by ID** (up to 100 IDs per call). For listing chunks without IDs, use Fetch Text Data; for similarity search, use Search.
+- [Upload File](references/upload_file.md): Use to **upload files** (PDF, DOCX, XLSX, TXT, MD, CSV, JSON) to a text namespace via the **pre-signed S3 URL** flow (up to **5GB**), or use **`documents.upload_file`** in the SDK which performs that flow for you. **Prefer this over Upload Text when the user has a file on disk**- no manual extraction or huge JSON payloads.
+- [List Files](references/list_files.md): Use to **list raw file objects** in document storage (S3) for a namespace (`file_name`, `size`, `last_modified`). Not the same as indexed text chunks- use **Fetch Text Data** or **Search** for pipeline-backed content.
+- [Delete Files](references/delete_files.md): Use to **delete storage file objects by name** (S3-backed uploads). Not the same as **Delete Data** (remove indexed documents/vectors by ID).
 - [Upload Vectors](references/upload_vectors.md): Use to **upload pre-computed vector embeddings** to a vector namespace. Best when you have your own embedding pipeline.
+- [Fetch Text Data](references/fetch_text_data.md): Use to **list text and summary chunks** in a text namespace (up to 100 per call) for export, UI, or inspection. Not a semantic search- use Search for queries.
 - [Delete Data](references/delete_data.md): Use to **remove specific documents or vectors** from a namespace.
 - [Create Example Data](references/example_data.md): Use to **create sample data for demos and testing** when no data is available.
 
@@ -45,14 +49,14 @@ For full environment setup, see [Environment Requirements](references/environmen
 ## Recommendations
 
 - Always run **List Namespaces** first to discover available data before searching or uploading.
-- For text data, prefer **text namespaces** — Moorcheh handles embedding automatically.
+- For text data, prefer **text namespaces**- Moorcheh handles embedding automatically.
 - Use **ITS scoring thresholds** (0.0–1.0) to control result quality. Higher = stricter matching.
-- The **Generate Answer** endpoint is the primary RAG capability — use it for Q&A over documents.
+- The **Generate Answer** endpoint is the primary RAG capability- use it for Q&A over documents.
 
 ## Output Formats
 
 - Search results include `id`, `score`, `label` (relevance category), `text`, and `metadata`.
-- AI answers include `answer`, `model`, `contextCount`, and optional `structuredData`.
+- AI answers include `answer`, `model`, `context_count`, and optional `structured_data` (plus `used_context` when structured output is enabled).
 
 ## Error Handling
 
@@ -76,18 +80,10 @@ Do **not** use emoji characters (e.g. ✅ ❌ 📁 ⏳ 🎉) in `print()` statem
 | `⏳ Waiting` | `[WAIT] Waiting` |
 | `📁 folder` | `- folder` |
 
-### Python SDK Uses snake_case
+### Use snake_case (REST and Python)
 
-The REST API uses camelCase (`aiModel`, `chatHistory`, `headerPrompt`, `footerPrompt`, `structuredResponse`). The Python SDK uses **snake_case**. Always use snake_case in Python code:
+As of **platform 1.5.10**, Moorcheh accepts and returns **snake_case** only for the answer API (and related JSON). Legacy camelCase field names were removed. Use the same names in curl, TypeScript/Java backends, and Python (`moorcheh_sdk` kwargs match JSON keys).
 
-| REST API (JSON/curl) | Python SDK kwarg |
-|---|---|
-| `aiModel` | `ai_model` |
-| `chatHistory` | `chat_history` |
-| `headerPrompt` | `header_prompt` |
-| `footerPrompt` | `footer_prompt` |
-| `structuredResponse` | `structured_response` |
-| `top_k` | `top_k` |
-| `namespace_name` | `namespace_name` |
+Common fields: `ai_model`, `chat_history`, `header_prompt`, `footer_prompt`, `structured_response`, `kiosk_mode`, `top_k`, `context_count`, `structured_data`, `follow_up_questions` (inside `structured_data` when using the default schema).
 
-Using camelCase kwargs in Python will raise `TypeError` or be silently ignored by the SDK.
+Do not send camelCase; validation may reject the request.

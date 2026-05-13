@@ -20,14 +20,15 @@ List all namespaces in your Moorcheh account, or inspect details of a specific n
 
 ## Workflow
 
-1. If no `name` argument provided:
-   - Run list namespaces script:
-     ```bash
-     uv run ${SKILL_ROOT}/skills/moorcheh/scripts/list_namespaces.py
-     ```
-   - Display all namespaces with their types and sizes
-2. If `name` argument is provided:
-   - Show namespace details (type, document/vector count, configuration)
+1. Run the list script (it always returns **all** namespaces- there is no per-name HTTP call in this pack):
+   ```bash
+   uv run ${SKILL_ROOT}/skills/moorcheh/scripts/list_namespaces.py
+   ```
+2. If no `name` argument was provided:
+   - Display every namespace with type, `vector_dimension` (when vector), and `item_count`
+3. If `name` **was** provided:
+   - Locate that namespace in the script output (or re-run and filter client-side)
+   - If missing, say so clearly; if present, echo **type**, **item_count**, and **vector_dimension** when relevant
 
 ## Environment
 

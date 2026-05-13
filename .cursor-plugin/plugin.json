@@ -1,6 +1,6 @@
 {
     "name": "moorcheh",
-    "description": "Moorcheh plugin for Cursor — semantic search, AI memory, and RAG",
+    "description": "Moorcheh plugin for Cursor- semantic search, AI memory, and RAG",
     "version": "0.1.0",
     "skills": [
         "skills/moorcheh",

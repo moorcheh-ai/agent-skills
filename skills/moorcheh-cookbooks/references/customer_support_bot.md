@@ -68,9 +68,9 @@ class SupportBot:
             query=question,
             top_k=3,
             temperature=0.3,
-            chatHistory=self.chat_history,
-            headerPrompt="You are a helpful customer support agent. Answer questions accurately based on the provided documentation. If you don't know the answer, say so and suggest contacting support@example.com.",
-            footerPrompt="Be concise, friendly, and professional."
+            chat_history=self.chat_history,
+            header_prompt="You are a helpful customer support agent. Answer questions accurately based on the provided documentation. If you don't know the answer, say so and suggest contacting support@example.com.",
+            footer_prompt="Be concise, friendly, and professional."
         )
 
         answer = response.get("answer", "I couldn't find an answer. Please contact support@example.com.")
@@ -150,6 +150,6 @@ async def reset(session_id: str = "default"):
 ## Deployment
 
 1. Upload your actual FAQ and documentation to the `customer-support` namespace
-2. Customize the `headerPrompt` with your company name and tone
+2. Customize the `header_prompt` with your company name and tone
 3. Deploy as a FastAPI service
 4. Connect to your chat widget or support platform

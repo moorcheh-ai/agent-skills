@@ -7,6 +7,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "moorcheh", "scripts"))
 from moorcheh_conn import get_client
+from moorcheh_sdk import ConflictError
 
 
 def stage(client, file_path, namespace):
@@ -16,8 +17,14 @@ def stage(client, file_path, namespace):
         sys.exit(1)
 
     print(f"Creating staging namespace '{namespace}'...")
-    client.namespaces.create(namespace_name=namespace, type="text")
-    print("[OK] Staging namespace created")
+    try:
+        client.namespaces.create(namespace_name=namespace, type="text")
+        print("[OK] Staging namespace created")
+    except ConflictError:
+        print(
+            f"[WARN] Namespace '{namespace}' already exists; uploading into existing staging. "
+            "Use --cleanup when done, or pick a new --staging-namespace."
+        )
 
     print(f"Uploading '{file_path}' to staging namespace...")
     client.documents.upload_file(namespace_name=namespace, file_path=file_path)

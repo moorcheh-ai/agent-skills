@@ -1,10 +1,10 @@
-# Deep Ingest — Large Document Workflow
+# Deep Ingest- Large Document Workflow
 
-Ingest documents that exceed the LLM prompt window (~200K characters) or are in binary formats (PDF, DOCX, XLSX). Moorcheh handles all file extraction, chunking, and indexing — the agent never reads the raw file locally.
+Ingest documents that exceed the LLM prompt window (~200K characters) or are in binary formats (PDF, DOCX, XLSX). Moorcheh handles all file extraction, chunking, and indexing- the agent never reads the raw file locally.
 
 ## The Problem
 
-Standard ingest reads the file directly into the agent's context. Documents exceeding the prompt window get **silently truncated** — the agent processes only the first portion with no error or warning. Binary formats (PDF, DOCX) can't be read locally at all without extra dependencies.
+Standard ingest reads the file directly into the agent's context. Documents exceeding the prompt window get **silently truncated**- the agent processes only the first portion with no error or warning. Binary formats (PDF, DOCX) can't be read locally at all without extra dependencies.
 
 ## When to Use
 
@@ -13,7 +13,7 @@ Standard ingest reads the file directly into the agent's context. Documents exce
 | < 100K characters | Text (MD, TXT, CSV) | Standard ingest (read file directly) |
 | 100K–200K characters | Text | Standard ingest (verify no truncation) |
 | > 200K characters | Any | **Deep ingest** |
-| Any size | PDF, DOCX, XLSX | **Deep ingest** — always safer, Moorcheh handles extraction |
+| Any size | PDF, DOCX, XLSX | **Deep ingest**- always safer, Moorcheh handles extraction |
 
 **Rule of thumb:** If the file is binary or you're unsure about size, use deep ingest.
 
@@ -66,7 +66,7 @@ raw/big-report.pdf
 
 ## Step-by-Step
 
-### Step 1 — Create staging namespace and upload file
+### Step 1- Create staging namespace and upload file
 
 ```python
 from moorcheh_sdk import MoorchehClient
@@ -79,7 +79,7 @@ STAGING = "staging-big-report"
 # Create a temporary staging namespace
 client.namespaces.create(namespace_name=STAGING, type="text")
 
-# Upload the file — Moorcheh extracts, chunks, and indexes it
+# Upload the file- Moorcheh extracts, chunks, and indexes it
 client.documents.upload_file(
     namespace_name=STAGING,
     file_path="raw/big-report.pdf"
@@ -94,14 +94,14 @@ uv run skills/moorcheh/scripts/deep_ingest.py \
   --staging-namespace "staging-big-report"
 ```
 
-### Step 2 — Wait for indexing
+### Step 2- Wait for indexing
 
 ```python
 print("[WAIT] Waiting for Moorcheh to process the file...")
 time.sleep(15)
 ```
 
-### Step 3 — Discover document structure
+### Step 3- Discover document structure
 
 ```python
 results = client.similarity_search.query(
@@ -115,7 +115,7 @@ for r in results.get("results", []):
 
 The agent reads these results to understand what sections/chapters the document contains.
 
-### Step 4 — Query chapter-by-chapter
+### Step 4- Query chapter-by-chapter
 
 For each section discovered in step 3, the agent queries for full content:
 
@@ -132,15 +132,15 @@ for section in sections:
     section_content[section] = results.get("results", [])
 ```
 
-### Step 5 — Build wiki pages
+### Step 5- Build wiki pages
 
-The agent now has the full document content in `section_content`. From here, the workflow is identical to standard ingest — create wiki pages, update index, glossary, overview, etc.
+The agent now has the full document content in `section_content`. From here, the workflow is identical to standard ingest- create wiki pages, update index, glossary, overview, etc.
 
-### Step 6 — Upload wiki pages to wiki namespace
+### Step 6- Upload wiki pages to wiki namespace
 
 Use the standard sync workflow (delete-then-upload) to push all new wiki pages to the wiki namespace.
 
-### Step 7 — Delete staging namespace
+### Step 7- Delete staging namespace
 
 ```python
 client.namespaces.delete(namespace_name=STAGING)
@@ -175,6 +175,6 @@ uv run skills/moorcheh/scripts/deep_ingest.py \
 
 - Moorcheh supports PDF, DOCX, XLSX, TXT, CSV, JSON, MD for file upload
 - Indexing takes ~15 seconds for most files; very large files may take longer
-- The staging namespace is temporary — always clean it up after wiki pages are built
-- The agent never reads the raw file locally — all content comes from Moorcheh search results
+- The staging namespace is temporary- always clean it up after wiki pages are built
+- The agent never reads the raw file locally- all content comes from Moorcheh search results
 - This workflow avoids all local dependencies (no pymupdf, no docx parser, etc.)

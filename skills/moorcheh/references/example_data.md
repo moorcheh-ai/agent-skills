@@ -14,9 +14,9 @@ uv run skills/moorcheh/scripts/example_data.py --namespace "demo-namespace"
 
 The script creates a text namespace called `demo-namespace` (or your chosen name) and uploads sample documents covering:
 
-- **Technology** — Articles about AI, machine learning, cloud computing
-- **Science** — Documents about physics, biology, chemistry
-- **Business** — Content about startups, marketing, finance
+- **Technology**- Articles about AI, machine learning, cloud computing
+- **Science**- Documents about physics, biology, chemistry
+- **Business**- Content about startups, marketing, finance
 
 Each document includes metadata fields (`category`, `author`, `difficulty`) for demonstrating filtered search.
 

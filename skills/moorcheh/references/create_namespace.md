@@ -1,6 +1,12 @@
 # Create Namespace
 
-Create a new namespace to organize and store your data. Namespaces can be text-based (automatic embedding) or vector-based (pre-computed embeddings).
+Create a new namespace to organize and store your data. Namespaces are isolated environments: **text** namespaces store documents and get embeddings from Moorcheh; **vector** namespaces store **your** pre-computed embeddings (dimension fixed at creation).
+
+Documentation index: [llms.txt](https://docs.moorcheh.ai/llms.txt).
+
+## Naming rules
+
+`namespace_name` must be **unique** in your account and may contain only **alphanumeric characters, hyphens, and underscores**.
 
 ## API
 
@@ -8,15 +14,19 @@ Create a new namespace to organize and store your data. Namespaces can be text-b
 POST https://api.moorcheh.ai/v1/namespaces
 ```
 
-### Parameters
+**Headers:** `Content-Type: application/json`, `x-api-key: <your-api-key>`
 
-| Parameter | Type | Required | Description |
+## Body parameters
+
+| Field | Type | Required | Description |
 |---|---|---|---|
-| `namespace_name` | string | Yes | Unique name for the namespace |
+| `namespace_name` | string | Yes | Unique name (alphanumeric, `-`, `_` only) |
 | `type` | string | Yes | `"text"` or `"vector"` |
-| `vector_dimension` | integer | When type=vector | Dimension of vector embeddings (e.g. 1536) |
+| `vector_dimension` | number | Yes if `type` is `"vector"` | Embedding size (e.g. `1536` for many OpenAI models). Not used for text namespaces |
 
-### Text Namespace (automatic embedding)
+## Examples
+
+### Text namespace
 
 ```bash
 curl -X POST "https://api.moorcheh.ai/v1/namespaces" \
@@ -28,47 +38,150 @@ curl -X POST "https://api.moorcheh.ai/v1/namespaces" \
   }'
 ```
 
-### Vector Namespace (pre-computed embeddings)
+### Vector namespace
 
 ```bash
 curl -X POST "https://api.moorcheh.ai/v1/namespaces" \
   -H "Content-Type: application/json" \
   -H "x-api-key: $MOORCHEH_API_KEY" \
   -d '{
-    "namespace_name": "my-vectors",
+    "namespace_name": "my-embeddings",
     "type": "vector",
     "vector_dimension": 1536
   }'
 ```
 
-### Response
+## Responses
+
+Responses use **snake_case** where JSON is returned. Some errors use top-level `status` + `message`; others use `error` + `message`- always branch on **HTTP status** first, then parse the body.
+
+### 201 Created
+
+**Text namespace (typical):**
 
 ```json
 {
   "status": "success",
-  "message": "Namespace 'my-documents' created successfully. ✅",
-  "namespace_name": "my-documents"
+  "message": "Namespace 'my-documents' created successfully.",
+  "namespace_name": "my-documents",
+  "type": "text"
+}
+```
+
+**Vector namespace (typical):** the body may echo `type` and `vector_dimension` (exact keys depend on API version).
+
+```json
+{
+  "status": "success",
+  "message": "Namespace 'my-embeddings' created successfully.",
+  "namespace_name": "my-embeddings",
+  "type": "vector",
+  "vector_dimension": 1536
+}
+```
+
+### 400 Bad Request
+
+```json
+{
+  "status": "failure",
+  "message": "Bad Request: namespace_name must contain only alphanumeric characters, hyphens, and underscores."
+}
+```
+
+### 401 Unauthorized
+
+```json
+{
+  "status": "failure",
+  "message": "Unauthorized: Invalid API key"
+}
+```
+
+### 403 Forbidden- namespace limit
+
+```json
+{
+  "status": "failure",
+  "message": "Namespace limit reached for Free tier (5 namespaces). Please upgrade your subscription for higher limits."
+}
+```
+
+### 403 Forbidden- generic
+
+```json
+{
+  "status": "failure",
+  "message": "Forbidden"
+}
+```
+
+### 409 Conflict
+
+```json
+{
+  "status": "failure",
+  "message": "Namespace 'my-namespace' already exists."
+}
+```
+
+### 500 Server Error
+
+```json
+{
+  "status": "failure",
+  "message": "Internal Server Error creating namespace."
+}
+```
+
+### Alternate error shape (examples)
+
+Some gateways or versions return:
+
+```json
+{
+  "error": "Invalid request parameters",
+  "message": "vector_dimension is required when type is vector",
+  "details": { "field": "vector_dimension" }
+}
+```
+
+```json
+{
+  "error": "Unauthorized",
+  "message": "Invalid or missing API key.",
+  "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
 
 ## Python SDK
 
 ```python
-from moorcheh_sdk import MoorchehClient
+from moorcheh_sdk import MoorchehClient, ConflictError, InvalidInputError
 
 with MoorchehClient(api_key="your-api-key") as client:
-    # Create a text namespace
-    client.namespaces.create(
-        namespace_name="my-documents",
-        type="text"
+    result = client.namespaces.create(
+        namespace_name="my-faq-documents",
+        type="text",
     )
+    print(result)
 
-    # Create a vector namespace
-    client.namespaces.create(
-        namespace_name="my-vectors",
+    result = client.namespaces.create(
+        namespace_name="my-image-embeddings",
         type="vector",
-        vector_dimension=1536
+        vector_dimension=768,
     )
+```
+
+**Returns:** `dict[str, Any]` with creation details. **Raises:** `ConflictError`, `InvalidInputError`, etc.
+
+```python
+try:
+    client.namespaces.create(namespace_name="my-documents", type="text")
+except ConflictError:
+    print("Namespace already exists")
+except InvalidInputError as e:
+    print(f"Invalid input: {e}")
 ```
 
 ## Script
@@ -79,9 +192,29 @@ uv run skills/moorcheh/scripts/create_namespace.py \
   --type "text"
 ```
 
-## Important Notes
+## Namespace types
 
-- Namespace type cannot be changed after creation
-- Vector dimension must be specified for vector namespaces and cannot be modified later
-- Namespace names must be unique within your account
-- Namespace creation counts toward your tier limits
+| | Text | Vector |
+|---|---|---|
+| **Use** | Docs, FAQs, articles | Custom / pre-computed embeddings |
+| **Embeddings** | Generated by Moorcheh | You supply vectors |
+| **Extra config** | None | `vector_dimension` required |
+
+## Important notes
+
+- **Type cannot change** after creation.
+- **Vector dimension** is fixed for the lifetime of a vector namespace.
+- Creation counts toward **tier namespace limits**.
+- Names must stay **unique** within the account.
+
+## Next steps
+
+- Text: [Upload Text Data](upload_text.md) or [Upload File](upload_file.md)  
+- Vector: [Upload Vectors](upload_vectors.md)  
+- [List Namespaces](list_namespaces.md)- confirm creation  
+- [Search](search.md)- after data is indexed  
+
+## Official references
+
+- [Create Namespace (REST)](https://docs.moorcheh.ai/api-reference/namespaces/create.md)
+- [Create Namespace (Python SDK)](https://docs.moorcheh.ai/python-sdk/namespaces/create.md)
