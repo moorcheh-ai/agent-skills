@@ -1,7 +1,7 @@
 # Moorcheh Agent Skills
 
 <p align="center">
-  <strong>Agent Skills for building AI applications with <a href="https://moorcheh.ai">Moorcheh</a> — the Universal Memory Layer for Agentic AI.</strong>
+  <strong>Agent Skills for building AI applications with <a href="https://moorcheh.ai">Moorcheh</a>- the Universal Memory Layer for Agentic AI.</strong>
 </p>
 
 <p align="center">
@@ -28,10 +28,10 @@ npx skills add moorcheh-ai/agent-skills
 ### Using Claude Code Plugin Manager
 
 ```bash
-# Step 1 — Add the marketplace (one time only)
+# Step 1- Add the marketplace (one time only)
 /plugin marketplace add moorcheh-ai/agent-skills
 
-# Step 2 — Install the plugin
+# Step 2- Install the plugin
 /plugin install moorcheh
 ```
 
@@ -70,10 +70,10 @@ export MOORCHEH_API_KEY="your-api-key"
 
 Core operations for interacting with the Moorcheh platform:
 
-- **Namespace Management** — Create, list, and delete namespaces
-- **Data Operations** — Upload text documents and vector embeddings
-- **Semantic Search** — Search with ITS scoring, metadata filters, and relevance labels
-- **AI Generation** — Generate RAG-powered answers with structured output
+- **Namespace Management**- Create, list, and delete namespaces
+- **Data Operations**- Upload text documents and vector embeddings
+- **Semantic Search**- Search with ITS scoring, metadata filters, and relevance labels
+- **AI Generation**- Generate RAG-powered answers with structured output
 
 </details>
 
@@ -82,14 +82,14 @@ Core operations for interacting with the Moorcheh platform:
 
 Blueprints for complete AI applications powered by Moorcheh:
 
-- **Knowledge Base RAG** — Document Q&A with source citations
-- **Customer Support Bot** — Conversational chatbot with chat history
-- **Semantic Search App** — Search with ITS scoring and filtering
-- **AI Q&A System** — Structured Q&A with multi-namespace routing
-- **Frontend Interface** — Next.js frontend (optional)
-- **LangChain Integration** — Use Moorcheh as a LangChain vector store
-- **LLM Wiki** — Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
-- **Deep Ingest** — Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) without local extraction — Moorcheh handles parsing, chunking, and indexing automatically
+- **Knowledge Base RAG**- Document Q&A with source citations
+- **Customer Support Bot**- Conversational chatbot with chat history
+- **Semantic Search App**- Search with ITS scoring and filtering
+- **AI Q&A System**- Structured Q&A with multi-namespace routing
+- **Frontend Interface**- Next.js frontend (optional)
+- **LangChain Integration**- Use Moorcheh as a LangChain vector store
+- **LLM Wiki**- Self-maintaining personal knowledge base (Karpathy pattern + Moorcheh ITS)
+- **Deep Ingest**- Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) without local extraction- Moorcheh handles parsing, chunking, and indexing automatically
 
 </details>
 

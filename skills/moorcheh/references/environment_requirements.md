@@ -5,7 +5,8 @@
 | Variable | Required | Description |
 |---|---|---|
 | `MOORCHEH_API_KEY` | **Yes** | Your Moorcheh API key from [console.moorcheh.ai](https://console.moorcheh.ai) |
-| `MOORCHEH_BASE_URL` | No | API base URL (default: `https://api.moorcheh.ai/v1`) |
+
+The Moorcheh REST API lives at **https://api.moorcheh.ai/v1**. The Python SDK uses that base URL by default.
 
 ## Setting Environment Variables
 
@@ -25,7 +26,7 @@ set MOORCHEH_API_KEY=your-api-key-here
 1. Sign up at [console.moorcheh.ai](https://console.moorcheh.ai)
 2. Navigate to API Keys section
 3. Generate a new API key
-4. Store it securely — never commit to version control
+4. Store it securely- never commit to version control
 
 ## Authentication Header
 

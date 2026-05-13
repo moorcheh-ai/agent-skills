@@ -37,6 +37,9 @@ def main():
         )
         count = result.get("documents_processed", len(documents))
         print(f"[OK] Uploaded {count} document(s) to '{args.namespace}'")
+        failed = result.get("failed_documents") or []
+        if failed:
+            print(f"[WARN] {len(failed)} document(s) failed- inspect failed_documents in API response")
         print("[WAIT] Documents are being indexed. Wait a few seconds before searching.")
     except Exception as e:
         print(f"[ERROR] Error uploading documents: {e}")

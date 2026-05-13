@@ -4,7 +4,7 @@ See [AGENTS.md](AGENTS.md) for full setup instructions.
 
 When ingesting a document into the wiki, check file type and size **before** reading it.
 
-### Pre-check (mandatory — run before every ingest)
+### Pre-check (mandatory- run before every ingest)
 
 Before reading any source file:
 1. Check file extension and size
@@ -29,12 +29,12 @@ def should_deep_ingest(file_path: str) -> bool:
         if size > MAX_DIRECT_READ:
             return True
     except OSError:
-        return True  # can't stat — safer to deep ingest
+        return True  # can't stat- safer to deep ingest
     return False
 ```
 
 **For plain text files < 200K characters (MD, TXT, CSV):**
-Use standard ingest — read the file directly into context and build wiki pages.
+Use standard ingest- read the file directly into context and build wiki pages.
 
 **For large documents (> 200K characters or any PDF/DOCX/XLSX binary format):**
 Use the Deep Ingest workflow instead of reading the file directly.

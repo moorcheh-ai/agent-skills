@@ -37,11 +37,12 @@ moorcheh-frontend/
 ## Environment Variables
 
 ```env
-# .env.local
+# .env.local- keep the API key server-side only
 MOORCHEH_API_KEY=your-api-key-here
-MOORCHEH_BASE_URL=https://api.moorcheh.ai/v1
 NEXT_PUBLIC_APP_TITLE=Moorcheh Search
 ```
+
+Call the Moorcheh API at **https://api.moorcheh.ai/v1** from your Next.js API routes (see below).
 
 ## API Routes
 
@@ -51,10 +52,12 @@ NEXT_PUBLIC_APP_TITLE=Moorcheh Search
 // app/api/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
+const MOORCHEH_API = 'https://api.moorcheh.ai/v1';
+
 export async function POST(request: NextRequest) {
   const { query, namespaces, top_k } = await request.json();
 
-  const response = await fetch(`${process.env.MOORCHEH_BASE_URL}/search`, {
+  const response = await fetch(`${MOORCHEH_API}/search`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -74,16 +77,18 @@ export async function POST(request: NextRequest) {
 // app/api/answer/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
-  const { query, namespace, chatHistory } = await request.json();
+const MOORCHEH_API = 'https://api.moorcheh.ai/v1';
 
-  const response = await fetch(`${process.env.MOORCHEH_BASE_URL}/answer`, {
+export async function POST(request: NextRequest) {
+  const { query, namespace, chat_history } = await request.json();
+
+  const response = await fetch(`${MOORCHEH_API}/answer`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': process.env.MOORCHEH_API_KEY!,
     },
-    body: JSON.stringify({ query, namespace, chatHistory }),
+    body: JSON.stringify({ query, namespace, chat_history }),
   });
 
   const data = await response.json();
@@ -93,7 +98,7 @@ export async function POST(request: NextRequest) {
 
 ## Key Guidelines
 
-- Always proxy Moorcheh API calls through Next.js API routes — never expose `MOORCHEH_API_KEY` to the client
+- Always proxy Moorcheh API calls through Next.js API routes- never expose `MOORCHEH_API_KEY` to the client
 - Use streaming for long AI-generated answers when possible
 - Add loading states for search and answer generation
 - Implement error handling with user-friendly messages

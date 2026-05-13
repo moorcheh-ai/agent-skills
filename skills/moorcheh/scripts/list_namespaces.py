@@ -23,6 +23,9 @@ def main():
             if ns_type == "vector":
                 dim = ns.get("vector_dimension", "?")
                 print(f"    Dimension: {dim}")
+            ic = ns.get("item_count")
+            if ic is not None:
+                print(f"    Items: {ic}")
         print()
     except Exception as e:
         print(f"[ERROR] Error listing namespaces: {e}")

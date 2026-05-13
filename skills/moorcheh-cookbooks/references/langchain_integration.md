@@ -79,7 +79,7 @@ print(answer)
 | `api_key` | str | env var | Moorcheh API key |
 | `namespace` | str | required | Namespace name |
 | `namespace_type` | str | "text" | "text" or "vector" |
-| `base_url` | str | api.moorcheh.ai | API base URL |
+| `base_url` | str | `https://api.moorcheh.ai/v1` | Moorcheh API base URL |
 
 ## Resources
 

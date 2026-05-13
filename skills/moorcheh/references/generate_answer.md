@@ -1,6 +1,8 @@
 # Generate AI Answer
 
-Generate AI-powered answers from your data using Retrieval-Augmented Generation (RAG). Searches relevant context from a namespace and synthesizes a natural-language answer.
+Generate AI-powered answers from your data using Retrieval-Augmented Generation (RAG), or call the model directly without a namespace. The API supports **Search Mode** (with namespace) and **Direct AI Mode** (empty namespace).
+
+Documentation index: [llms.txt](https://docs.moorcheh.ai/llms.txt).
 
 ## API
 
@@ -8,21 +10,50 @@ Generate AI-powered answers from your data using Retrieval-Augmented Generation 
 POST https://api.moorcheh.ai/v1/answer
 ```
 
-### Parameters
+**Headers:** `Content-Type: application/json`, `x-api-key: <MOORCHEH_API_KEY>`
 
-| Parameter | Type | Required | Description |
+### Naming (snake_case)
+
+Use **snake_case** for all JSON request and response fields. Legacy camelCase aliases were removed in **platform version 1.5.10** (May 2026). Send only snake_case in curl, backends, and the Python SDK.
+
+## Body parameters
+
+| Field | Type | Required | Description |
 |---|---|---|---|
-| `query` | string | Yes | The question to answer |
-| `namespace` | string | Yes | Namespace to search for context (use `""` for direct AI mode) |
-| `top_k` | integer | No | Number of context documents (default: 5) |
-| `threshold` | float | No | Minimum relevance score for context |
-| `temperature` | float | No | Response creativity (0.0–2.0, default: 0.7) |
-| `type` | string | No | Namespace type: `"text"` or `"vector"` |
-| `aiModel` | string | No | AI model to use (default: `anthropic.claude-sonnet-4-6`). **Important:** always pass this parameter explicitly — older SDK versions default to a model ID that returns 500 errors from Bedrock. |
-| `chatHistory` | array | No | Previous conversation turns |
-| `headerPrompt` | string | No | System prompt prepended to context |
-| `footerPrompt` | string | No | Instructions appended after context |
-| `structuredResponse` | object | No | Enable structured JSON output |
+| `query` | string | Yes | The user's question |
+| `namespace` | string | Yes | Namespace for Search Mode, or `""` for Direct AI Mode |
+| `top_k` | number | No | Top relevant chunks (default: 10) |
+| `threshold` | number | No | Minimum ITS relevance (0–1). Required when `kiosk_mode` is true |
+| `temperature` | number | No | Creativity 0.0–2.0 (default: 0.7) |
+| `type` | string | No | Search type: `"text"` (default) |
+| `ai_model` | string | No | Model ID (see table below). Prefer setting explicitly- some SDK defaults can hit Bedrock errors |
+| `kiosk_mode` | boolean | No | When true, filter low-relevance chunks; `threshold` is then required |
+| `chat_history` | array | No | Prior turns: `{ "role": "user"|"assistant", "content": "..." }` |
+| `header_prompt` | string | No | Custom instruction / system-style behavior |
+| `footer_prompt` | string | No | Appended instruction (default behavior similar to “clear and concise answer”) |
+| `structured_response` | object | No | `{ "enabled": true, ... }` for JSON in `structured_data` |
+
+### Field restrictions
+
+**Direct AI Mode** (`namespace: ""`): only these fields are allowed: `namespace`, `query`, `temperature`, `chat_history`, `footer_prompt`, `header_prompt`, `ai_model`, `structured_response`.
+
+**Search Mode** (non-empty namespace): all fields above are allowed, including `top_k`, `threshold`, `type`, `kiosk_mode`.
+
+## Available models
+
+| Model ID | Name | Provider | Credits |
+|---|---|---|---|
+| `anthropic.claude-sonnet-4-6` | Claude Sonnet 4.6 | Anthropic | 3 |
+| `anthropic.claude-opus-4-6-v1` | Claude Opus 4.6 | Anthropic | 3 |
+| `meta.llama4-maverick-17b-instruct-v1:0` | Llama 4 Maverick 17B | Meta | 3 |
+| `amazon.nova-pro-v1:0` | Amazon Nova Pro | Amazon | 2 |
+| `deepseek.r1-v1:0` | DeepSeek R1 | DeepSeek | 1 |
+| `deepseek.v3.2` | DeepSeek V3.2 | DeepSeek | 2 |
+| `openai.gpt-oss-120b-1:0` | OpenAI GPT OSS 120B | OpenAI | 3 |
+| `qwen.qwen3-32b-v1:0` | Qwen 3 32B | Qwen | 2 |
+| `qwen.qwen3-next-80b-a3b` | Qwen3 Next 80B A3B | Qwen | 1 |
+
+## Examples
 
 ### Search Mode (with namespace)
 
@@ -38,7 +69,7 @@ curl -X POST "https://api.moorcheh.ai/v1/answer" \
   }'
 ```
 
-### Direct AI Mode (no namespace)
+### Direct AI Mode (empty namespace)
 
 ```bash
 curl -X POST "https://api.moorcheh.ai/v1/answer" \
@@ -46,11 +77,19 @@ curl -X POST "https://api.moorcheh.ai/v1/answer" \
   -H "x-api-key: $MOORCHEH_API_KEY" \
   -d '{
     "namespace": "",
-    "query": "Explain the difference between semantic and keyword search"
+    "query": "Explain quantum computing in simple terms",
+    "ai_model": "deepseek.r1-v1:0",
+    "temperature": 0.7,
+    "chat_history": [
+      {"role": "user", "content": "What is AI?"},
+      {"role": "assistant", "content": "AI is artificial intelligence..."}
+    ],
+    "header_prompt": "You are a science teacher.",
+    "footer_prompt": "Use simple language and examples."
   }'
 ```
 
-### With Chat History
+### With chat history (Search Mode)
 
 ```bash
 curl -X POST "https://api.moorcheh.ai/v1/answer" \
@@ -59,14 +98,14 @@ curl -X POST "https://api.moorcheh.ai/v1/answer" \
   -d '{
     "namespace": "my-documents",
     "query": "Can you elaborate on the second point?",
-    "chatHistory": [
+    "chat_history": [
       { "role": "user", "content": "What are key features?" },
       { "role": "assistant", "content": "The key features are..." }
     ]
   }'
 ```
 
-### With Structured Output
+### Structured output (default schema)
 
 ```bash
 curl -X POST "https://api.moorcheh.ai/v1/answer" \
@@ -75,38 +114,121 @@ curl -X POST "https://api.moorcheh.ai/v1/answer" \
   -d '{
     "namespace": "my-documents",
     "query": "Summarize the key points",
-    "structuredResponse": {
-      "enabled": true
-    }
+    "structured_response": { "enabled": true }
   }'
 ```
 
-### Response
+## Response fields
+
+| Field | Type | Description |
+|---|---|---|
+| `answer` | string | Generated answer |
+| `model` | string | Model ID used |
+| `context_count` | number | Chunks used for RAG |
+| `query` | string | Echo of the submitted query |
+| `used_context` | boolean | When structured output is used: whether RAG context was applied |
+| `structured_data` | object | Present when `structured_response.enabled` is true |
+
+### Structured output
+
+With `structured_response: { "enabled": true }`, `structured_data` follows your schema or the **default schema** (snake_case keys), including e.g. `answer`, `confidence`, `sources`, `summary`, `topics`, `follow_up_questions`. Optional keys on `structured_response`: `schema`, `tool_name`, `tool_description`.
+
+### Example responses (HTTP 200)
+
+#### Unstructured answer
 
 ```json
 {
-  "answer": "The main benefits include higher accuracy through ITS scoring, better performance with MIB technology, and explainable results...",
-  "model": "anthropic.claude-sonnet-4-6",
-  "contextCount": 3,
-  "query": "What are the main benefits of Moorcheh?"
+  "answer": "Serverless architecture offers reduced ops cost, automatic scaling, and faster delivery...",
+  "model": "deepseek.r1-v1:0",
+  "context_count": 3,
+  "query": "What are the main benefits of using serverless architecture?"
 }
 ```
 
-### Structured Response
+#### Structured output (`structured_response.enabled`)
 
-When `structuredResponse.enabled` is `true`, the response includes:
-- `answer` — Plain text answer
-- `confidence` — Confidence level
-- `sources` — Source document references
-- `summary` — Brief summary
-- `topics` — Extracted topics
-- `followUpQuestions` — Suggested follow-up questions
+```json
+{
+  "answer": "The main answer to the user's query",
+  "model": "deepseek.r1-v1:0",
+  "context_count": 3,
+  "query": "What are the system requirements?",
+  "used_context": true,
+  "structured_data": {
+    "answer": "The main answer to the user's query",
+    "confidence": 0.92,
+    "sources": [
+      { "id": "chunk-1", "relevance": "high" },
+      { "id": "chunk-3", "relevance": "medium" }
+    ],
+    "summary": "Short summary under 200 chars.",
+    "topics": ["requirements", "compatibility", "hardware"],
+    "follow_up_questions": ["Does it support Windows 11?", "What about Mac M1?"]
+  }
+}
+```
 
-## Temperature Guide
+### Common errors
 
-- **0.0–0.5**: Conservative, factual — best for technical documentation
-- **0.5–1.0**: Balanced — good for general Q&A
-- **1.0–2.0**: Creative — use carefully for factual content
+```json
+{
+  "error": "Unauthorized",
+  "message": "Invalid or missing API key. Please check your x-api-key header.",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+```json
+{
+  "status": "failure",
+  "message": "Bad Request: kiosk_mode requires threshold to be set."
+}
+```
+
+```json
+{
+  "error": "Namespace not found",
+  "message": "No text namespace found with the name 'my-documents' in your account.",
+  "namespace_name": "my-documents"
+}
+```
+
+```json
+{
+  "status": "failure",
+  "message": "API request limit reached for Professional plan (1000000 requests). Current usage: 1000000.",
+  "current_usage": 1000000,
+  "limit": 1000000
+}
+```
+
+```json
+{
+  "error": "Internal server error",
+  "message": "An unexpected error occurred while generating the answer.",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "request_id": "req_1234567890"
+}
+```
+
+## ITS relevance labels (threshold tuning)
+
+| Label | Score range |
+|---|---|
+| Close Match | score ≥ 0.894 |
+| Very High Relevance | 0.632 ≤ score < 0.894 |
+| High Relevance | 0.447 ≤ score < 0.632 |
+| Good Relevance | 0.316 ≤ score < 0.447 |
+| Low Relevance | 0.224 ≤ score < 0.316 |
+| Very Low Relevance | 0.1 ≤ score < 0.224 |
+| Irrelevant | score < 0.1 |
+
+## Temperature guide
+
+- **0.0–0.5**: Conservative, factual- technical documentation
+- **0.5–1.0**: Balanced- general Q&A
+- **1.0–2.0**: More creative- use carefully for factual content
 
 ## Python SDK
 
@@ -114,22 +236,20 @@ When `structuredResponse.enabled` is `true`, the response includes:
 from moorcheh_sdk import MoorchehClient
 
 with MoorchehClient(api_key="your-api-key") as client:
-    # Basic RAG answer
     response = client.answer.generate(
         namespace="my-documents",
         query="What are the main benefits of Moorcheh?",
-        ai_model="anthropic.claude-sonnet-4-6"
+        ai_model="anthropic.claude-sonnet-4-6",
     )
-    print(f"Answer: {response['answer']}")
+    print(response["answer"])
 
-    # With chat history
     response = client.answer.generate(
         namespace="my-documents",
         query="Tell me more about the second point",
         chat_history=[
             {"role": "user", "content": "What are key features?"},
-            {"role": "assistant", "content": "The key features are..."}
-        ]
+            {"role": "assistant", "content": "The key features are..."},
+        ],
     )
 ```
 
@@ -141,10 +261,20 @@ uv run skills/moorcheh/scripts/generate_answer.py \
   --query "What are the main benefits of Moorcheh?"
 ```
 
-## Use Cases
+## Use cases
 
-- **Customer Support**: Answer questions using documentation
-- **Internal Q&A**: Help employees find answers in knowledge bases
-- **Educational Tools**: Create AI tutors using educational content
-- **Research Assistance**: Get insights from research papers
-- **Technical Support**: Provide answers based on technical docs
+- Customer support from documentation
+- Internal Q&A over knowledge bases
+- Educational / research assistants
+- Technical support from docs
+
+## Related
+
+- [Semantic Search](search.md)- retrieve context only
+- [Upload Text Data](upload_text.md)- add documents for RAG
+- [List Namespaces](list_namespaces.md)- discover namespaces
+
+## Official references
+
+- [Generate AI Answer (REST)](https://docs.moorcheh.ai/api-reference/ai/generate.md)
+- [Generate AI Answer (Python SDK)](https://docs.moorcheh.ai/python-sdk/ai/generate.md)

@@ -25,7 +25,7 @@ Follow these shared guidelines before generating any cookbook app:
 ### Code Generation Rules
 
 1. **No Unicode emoji in output.** Do not use ✅ ❌ 📁 ⏳ 🎉 or any emoji in `print()` or log messages. They crash on Windows cp1252 terminals. Use `[OK]`, `[ERROR]`, `[WAIT]` instead.
-2. **Python SDK uses snake_case.** The REST API uses camelCase (`aiModel`, `chatHistory`) but the Python SDK uses snake_case (`ai_model`, `chat_history`). Always use snake_case in Python code. Using camelCase kwargs will fail silently or raise `TypeError`.
+2. **Use snake_case everywhere.** Moorcheh JSON (REST and Python SDK) uses snake_case for answer/search payloads as of platform 1.5.10. Do not use legacy camelCase field names.
 
 Then proceed to the specific cookbook reference below.
 
@@ -35,9 +35,9 @@ Then proceed to the specific cookbook reference below.
 - [Customer Support Bot](references/customer_support_bot.md): Build a customer support chatbot that answers questions from your FAQ and documentation using conversational RAG with chat history.
 - [Semantic Search App](references/semantic_search_app.md): Build a semantic search application with ITS scoring, metadata filtering, and relevance-labeled results.
 - [AI Q&A System](references/ai_qa_system.md): Build a question-answering system with structured output, custom prompts, and multi-namespace search.
-- **LLM Wiki** — Self-maintaining personal knowledge base using Karpathy's LLM Wiki
+- **LLM Wiki**- Self-maintaining personal knowledge base using Karpathy's LLM Wiki
   pattern extended with Moorcheh ITS search. See [references/llm_wiki.md](references/llm_wiki.md).
-- [Deep Ingest](references/deep_ingest.md): Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) by uploading to a Moorcheh staging namespace. No local extraction needed — Moorcheh handles parsing, chunking, and indexing.
+- [Deep Ingest](references/deep_ingest.md): Ingest large documents (>200K chars) or binary files (PDF, DOCX, XLSX) by uploading to a Moorcheh staging namespace. No local extraction needed- Moorcheh handles parsing, chunking, and indexing.
 
 ## Integrations
 
@@ -53,13 +53,13 @@ uploads them to Moorcheh for persistent ITS-powered semantic search.
 - You are accumulating knowledge across many sources over time (research, product, competitive intel)
 - You want your AI agent to build and maintain a wiki automatically
 - You need semantic search + metadata filtering across a large collection of notes
-- You want knowledge to compound — every source and every query enriches the base
+- You want knowledge to compound- every source and every query enriches the base
 
 **Key components:**
-- `raw/` — immutable source documents (agent reads only)
-- `wiki/` — agent-generated markdown pages, interlinked and growing
-- `CLAUDE.md` / `AGENTS.md` — the schema that tells the agent how to maintain the wiki
-- Moorcheh namespace — persistent ITS-indexed copy of all wiki pages
+- `raw/`- immutable source documents (agent reads only)
+- `wiki/`- agent-generated markdown pages, interlinked and growing
+- `CLAUDE.md` / `AGENTS.md`- the schema that tells the agent how to maintain the wiki
+- Moorcheh namespace- persistent ITS-indexed copy of all wiki pages
 
 **Full implementation guide:** [references/llm_wiki.md](references/llm_wiki.md)
 **Starter repo:** https://github.com/moorcheh-ai/llm-wiki

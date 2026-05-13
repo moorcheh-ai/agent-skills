@@ -1,6 +1,12 @@
+---
+description: Set up and operate an LLM Wiki (Karpathy pattern + Moorcheh ITS)
+argument-hint: setup | ingest <file> | query "<question>" | lint | sync
+allowed-tools: Bash(uv:*), Bash(git:*), Read, Write, AskUserQuestion, Skill
+---
+
 # /moorcheh:llm-wiki
 
-Set up and operate an LLM Wiki — a self-maintaining knowledge base using
+Set up and operate an LLM Wiki- a self-maintaining knowledge base using
 Karpathy's pattern extended with Moorcheh ITS search.
 
 ## Usage

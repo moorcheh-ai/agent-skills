@@ -52,8 +52,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MOORCHEH_API_KEY = os.environ.get("MOORCHEH_API_KEY")
-MOORCHEH_BASE_URL = os.environ.get("MOORCHEH_BASE_URL", "https://api.moorcheh.ai/v1")
 NAMESPACE = os.environ.get("MOORCHEH_NAMESPACE", "default")
+# Moorcheh API: https://api.moorcheh.ai/v1 (default in moorcheh_sdk.MoorchehClient)
 ```
 
 ## Environment File Template

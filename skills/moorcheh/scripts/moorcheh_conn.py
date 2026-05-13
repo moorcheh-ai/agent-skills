@@ -4,6 +4,9 @@
 import os
 import sys
 
+DEFAULT_BASE_URL = "https://api.moorcheh.ai/v1"
+
+
 def get_client():
     """Create and return a MoorchehClient instance."""
     try:
@@ -20,8 +23,7 @@ def get_client():
         print("Then run: export MOORCHEH_API_KEY='your-api-key-here'")
         sys.exit(1)
 
-    base_url = os.environ.get("MOORCHEH_BASE_URL", "https://api.moorcheh.ai/v1")
-    return MoorchehClient(api_key=api_key, base_url=base_url)
+    return MoorchehClient(api_key=api_key, base_url=DEFAULT_BASE_URL)
 
 
 def get_api_headers():
@@ -38,4 +40,4 @@ def get_api_headers():
 
 def get_base_url():
     """Return the Moorcheh API base URL."""
-    return os.environ.get("MOORCHEH_BASE_URL", "https://api.moorcheh.ai/v1")
+    return DEFAULT_BASE_URL

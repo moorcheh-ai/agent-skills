@@ -29,8 +29,8 @@ for ns in ["docs-api", "docs-guides", "docs-faq"]:
 
 # Upload API reference docs
 client.documents.upload(namespace_name="docs-api", documents=[
-    {"id": "api-1", "text": "POST /v1/search — Semantic search endpoint...", "section": "api"},
-    {"id": "api-2", "text": "POST /v1/answer — AI generation endpoint...", "section": "api"}
+    {"id": "api-1", "text": "POST /v1/search- Semantic search endpoint...", "section": "api"},
+    {"id": "api-2", "text": "POST /v1/answer- AI generation endpoint...", "section": "api"}
 ])
 
 # Upload guides
@@ -51,18 +51,18 @@ def qa_structured(question: str, namespace: str = "docs-api") -> dict:
         namespace=namespace,
         query=question,
         temperature=0.2,  # Low temperature for factual answers
-        structuredResponse={"enabled": True},
-        headerPrompt="You are a technical documentation assistant. Provide accurate, specific answers.",
-        footerPrompt="Include relevant code examples when applicable."
+        structured_response={"enabled": True},
+        header_prompt="You are a technical documentation assistant. Provide accurate, specific answers.",
+        footer_prompt="Include relevant code examples when applicable."
     )
 
-    structured = response.get("structuredData", {})
+    structured = response.get("structured_data", {})
     return {
         "answer": structured.get("answer", response.get("answer")),
         "confidence": structured.get("confidence", "unknown"),
         "sources": structured.get("sources", []),
         "topics": structured.get("topics", []),
-        "follow_up": structured.get("followUpQuestions", [])
+        "follow_up": structured.get("follow_up_questions", [])
     }
 
 result = qa_structured("How do I perform a semantic search?")
@@ -106,7 +106,7 @@ def smart_qa(question: str) -> dict:
     return {
         "answer": response.get("answer"),
         "source": best_namespace,
-        "context_count": response.get("contextCount", 0)
+        "context_count": response.get("context_count", 0)
     }
 ```
 
